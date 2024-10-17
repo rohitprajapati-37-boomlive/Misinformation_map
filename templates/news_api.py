@@ -1,17 +1,11 @@
 import streamlit as st
-
-# Ensure this is the very first Streamlit command
-st.set_page_config(page_title="Home Page", layout="wide")
-
 import pandas as pd
 import requests
 from streamlit_folium import st_folium
 import folium
-from functools import lru_cache
-from threading import Thread
 
-# The rest of your code goes here...
-
+# Ensure this is the very first Streamlit command
+st.set_page_config(page_title="Home Page", layout="wide")
 
 # Google Sheets API URL
 api_url = 'https://script.google.com/macros/s/AKfycbwBC4nQXIlrDUoSYI1lbZ6qWPdRyGDkjy0FAPsNl9wGn_msOwVV1M2z4abJr__0F7ee1w/exec'
@@ -44,11 +38,16 @@ def get_city_locations(df):
 # Get city locations
 city_locations = get_city_locations(news_df)
 
-# Cache the GeoJSON data with lazy loading
+# Cache the GeoJSON data
 @st.cache_data
 def load_geojson_data():
     geojson_url = 'https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson'
-    return requests.get(geojson_url).json()
+    response = requests.get(geojson_url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        st.error("Failed to load GeoJSON data.")
+        return {}
 
 # Function to filter news by city
 def filter_news_by_city(news, city_name):
@@ -86,7 +85,7 @@ def filter_news_by_city(news, city_name):
                 unsafe_allow_html=True
             )
 
-# Function to create map with hover effect and state borders (load geojson lazily)
+# Function to create map with hover effect and state borders
 def create_map_with_hover(city_locations):
     m = folium.Map(location=[20.5937, 78.9629], zoom_start=5)
 
@@ -100,9 +99,9 @@ def create_map_with_hover(city_locations):
                 icon=folium.Icon(color='blue')
             ).add_to(m)
 
-    # Load GeoJSON lazily in a separate thread
-    def add_geojson():
-        geojson_data = load_geojson_data()
+    # Load GeoJSON data
+    geojson_data = load_geojson_data()
+    if geojson_data:
         folium.GeoJson(
             geojson_data,
             name='geojson',
@@ -120,10 +119,6 @@ def create_map_with_hover(city_locations):
             tooltip=folium.GeoJsonTooltip(fields=['NAME_1'], aliases=['State: '])
         ).add_to(m)
 
-    # Run the GeoJSON addition in a separate thread
-    thread = Thread(target=add_geojson)
-    thread.start()
-    
     return m
 
 # Function to render the news page in Streamlit app
@@ -137,7 +132,7 @@ def news_api_page():
 
         # Display the map with hover effect
         m = create_map_with_hover(city_locations)
-        map_output = st_folium(m, width=500, height=500)
+        map_output = st_folium(m, width=700, height=500)  # Increased width for better view
 
         city_name = ""
         if map_output and 'last_object_clicked_popup' in map_output:
