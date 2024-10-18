@@ -68,7 +68,7 @@ def filter_news_by_city(news, city_name):
                                 <img src="{row['Image']}" alt="News Image" style="width: 100%; height: auto; border-radius: 8px;">
                             </a>
                         </div>
-                        <div style="flex: 2;">
+                        <div style="flex:2;">
                             <p class="category-trt">{category}</p>
                             <p class="author_ad_date">By <strong>{row['Author']}</strong> | {row['Date Of Publish']}</p>
                             <a class="more-btn" href="{row['URL']}" target="_blank" >Read More</a>
