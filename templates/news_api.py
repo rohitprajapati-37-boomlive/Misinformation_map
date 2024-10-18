@@ -3,8 +3,9 @@ import pandas as pd
 import requests
 from streamlit_folium import st_folium
 import folium
+from folium.plugins import MarkerCluster  # Added for clustering
 
-# Ensure this is the very first Streamlit command
+# Set page configuration
 st.set_page_config(page_title="Home Page", layout="wide")
 
 # Google Sheets API URL
@@ -29,7 +30,6 @@ def get_city_locations(df):
         # Filter out rows with empty or invalid latitude/longitude
         df = df[df['Latitude'].apply(lambda x: str(x).replace('.', '', 1).isdigit())]
         df = df[df['Longitude'].apply(lambda x: str(x).replace('.', '', 1).isdigit())]
-        
         return df[['City', 'Latitude', 'Longitude']].drop_duplicates().set_index('City').T.to_dict('list')
     else:
         st.error("City location data not available in the dataset.")
@@ -89,6 +89,9 @@ def filter_news_by_city(news, city_name):
 def create_map_with_hover(city_locations):
     m = folium.Map(location=[20.5937, 78.9629], zoom_start=5)
 
+    # Cluster the city markers
+    marker_cluster = MarkerCluster().add_to(m)
+
     # Add city markers
     for city, coords in city_locations.items():
         if all(isinstance(coord, (int, float)) for coord in coords):  # Check if coordinates are valid
@@ -97,7 +100,7 @@ def create_map_with_hover(city_locations):
                 popup=city,
                 tooltip=f"Click for news from {city}",
                 icon=folium.Icon(color='blue')
-            ).add_to(m)
+            ).add_to(marker_cluster)  # Add to cluster instead of map directly
 
     # Load GeoJSON data
     geojson_data = load_geojson_data()
