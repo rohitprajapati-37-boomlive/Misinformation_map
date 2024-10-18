@@ -66,15 +66,16 @@
   }
   
   .more-btn {
-    color: white; 
+    color: white !important; 
     background-color: #203361; 
-    padding: 8px 12px; 
+    padding: 6px 12px; 
     text-decoration: none; 
     border-radius: 5px;
   }
   
   .more-btn:hover {
-    background-color: #e85350; 
+    background-color: #e85350;
+    text-decoration: none;  
   }
   
   .future-img img {
@@ -83,3 +84,16 @@
     border-radius: 8px;
   }
   
+
+  .category-trt{
+    margin: 0px;
+    background-color: #fcf5e6;
+    border-radius: 10px;
+    color: #e09f0f;
+    width: 25%;
+    text-align: center;
+  }
+  p.author_ad_date {
+    margin: 10px 0;
+    color: rgb(119, 119, 119);
+}
