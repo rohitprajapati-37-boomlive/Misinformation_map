@@ -87,7 +87,7 @@ def create_map_with_hover(city_locations):
                 location=coords,
                 popup=city,
                 tooltip=f"Click for news from {city}",
-                icon=folium.Icon(color='blue')
+                icon=folium.Icon(color='#e5504d2')
             ).add_to(m)
 
     geojson_data = load_geojson_data()
