@@ -49,7 +49,7 @@ def load_geojson_data():
 def filter_news_by_city(news, city_name):
     filtered_news = news[news['City'].str.lower() == city_name.lower()]
     if filtered_news.empty:
-        st.write(f"{city_name} ke liye koi news nahi mili.")
+        st.write(f"{city_name} No news is available for this city.")
     else:
         for index, row in filtered_news.iterrows():
             category = row['Category'] if 'Category' in row else 'N/A'
@@ -59,7 +59,7 @@ def filter_news_by_city(news, city_name):
                 <div class="art-card-box" style="border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
                     <div style="width: 100%; margin-bottom: 10px;">
                         <a href="{row['URL']}" target="_blank" class="heading-link">
-                            <h3 class="main-heading-txt" style="margin: 0; color: #007BFF;">{row['Heading']}</h3>
+                            <h3 class="main-heading-txt">{row['Heading']}</h3>
                         </a>
                     </div>
                     <div style="display: flex;">
